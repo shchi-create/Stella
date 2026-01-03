@@ -17,28 +17,13 @@ check_kb = types.InlineKeyboardMarkup(inline_keyboard=[
     [types.InlineKeyboardButton(text="Проверить подписку", callback_data="check")]
 ])
 
-# Reply-кнопка /start под строкой ввода (отображается один раз)
-start_kb = types.ReplyKeyboardMarkup(
-    keyboard=[[types.KeyboardButton(text="/start")]],
-    resize_keyboard=True,
-    one_time_keyboard=True  # кнопка исчезает после нажатия
-)
-
 # Обработчик команды /start
 @dp.message(CommandStart())
 async def start(message: types.Message):
-    # Если это первый запуск — покажем кнопку START
-    if message.text == "/start":
-        await message.answer(
-            "Привет! Нажми кнопку ниже, чтобы проверить подписку на канал:",
-            reply_markup=start_kb
-        )
-    # После нажатия кнопки /start показываем Inline-кнопку и убираем Reply-клавиатуру
     await message.answer(
-        "Теперь нажми 'Проверить подписку':",
+        "Нажми кнопку ниже, чтобы проверить подписку на канал:",
         reply_markup=check_kb
     )
-    await message.answer(" ", reply_markup=types.ReplyKeyboardRemove())  # скрываем кнопку START
 
 # Обработчик нажатия Inline-кнопки
 @dp.callback_query(F.data == "check")
