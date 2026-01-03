@@ -12,7 +12,7 @@ CHANNEL_USERNAME = "@svetlanafortunatur"
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-kb = types.InlineKeyboardMarkup(inline_keyboard=[
+check_kb = types.InlineKeyboardMarkup(inline_keyboard=[
     [types.InlineKeyboardButton(text="Проверить подписку", callback_data="check")]
 ])
 
@@ -20,11 +20,11 @@ kb = types.InlineKeyboardMarkup(inline_keyboard=[
 async def start(message: types.Message):
     await message.answer(
         "Нажми кнопку ниже, чтобы проверить подписку на канал:",
-        reply_markup=kb
+        reply_markup=check_kb
     )
 
 @dp.callback_query(F.data == "check")
-async def check_sub(callback: types.CallbackQuery):
+async def check_subscription(callback: types.CallbackQuery):
     try:
         member = await bot.get_chat_member(CHANNEL_USERNAME, callback.from_user.id)
 
@@ -33,7 +33,7 @@ async def check_sub(callback: types.CallbackQuery):
         else:
             await callback.message.answer("Ты не подписан. Подпишись и попробуи снова.")
     except:
-        await callback.message.answer("Я не могу проверить подписку. Убедись, что ты зашел в канал.")
+        await callback.message.answer("Не могу проверить подписку. Убедись, что ты зашел в канал.")
 
     await callback.answer()
 
