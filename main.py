@@ -12,36 +12,30 @@ CHANNEL_USERNAME = "@svetlanafortunatur"
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-kb = types.ReplyKeyboardMarkup(
-    keyboard=[[types.KeyboardButton(text="START")]],
-    resize_keyboard=True
-)
+kb = types.InlineKeyboardMarkup(inline_keyboard=[
+    [types.InlineKeyboardButton(text="Проверить подписку", callback_data="check")]
+])
 
 @dp.message(CommandStart())
 async def start(message: types.Message):
-    await message.answer("Нажми кнопку START", reply_markup=kb)
+    await message.answer(
+        "Нажми кнопку ниже, чтобы проверить подписку на канал:",
+        reply_markup=kb
+    )
 
-@dp.message(F.text == "START")
-async def ask_user(message: types.Message):
-    await message.answer("Кого ищем? Напиши @username")
-
-@dp.message(F.text.startswith("@"))
-async def check_user(message: types.Message):
-    username = message.text.replace("@", "").strip()
-
+@dp.callback_query(F.data == "check")
+async def check_sub(callback: types.CallbackQuery):
     try:
-        member = await bot.get_chat_member(
-            chat_id=CHANNEL_USERNAME,
-            user_id=username
-        )
+        member = await bot.get_chat_member(CHANNEL_USERNAME, callback.from_user.id)
 
         if member.status in ["member", "administrator", "creator"]:
-            await message.answer("Есть такой пользователь")
+            await callback.message.answer("Ты подписан на канал. Добро пожаловать!")
         else:
-            await message.answer("Нет такого пользователя")
-
+            await callback.message.answer("Ты не подписан. Подпишись и попробуи снова.")
     except:
-        await message.answer("Нет такого пользователя")
+        await callback.message.answer("Я не могу проверить подписку. Убедись, что ты зашел в канал.")
+
+    await callback.answer()
 
 async def main():
     await dp.start_polling(bot)
