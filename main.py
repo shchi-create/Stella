@@ -14,20 +14,20 @@ dp = Dispatcher()
 
 # Inline-кнопка "Проверить подписку"
 check_kb = types.InlineKeyboardMarkup(inline_keyboard=[
-    [types.InlineKeyboardButton(text="Проверить подписку", callback_data="check")]
+    [types.InlineKeyboardButton(text="Получить промокод", callback_data="check")]
 ])
 
 # Кнопки для пользователей, которые ещё не подписаны
 subscribe_kb = types.InlineKeyboardMarkup(inline_keyboard=[
     [types.InlineKeyboardButton(text="Подписаться на канал", url="https://t.me/svetlanafortunatur")],
-    [types.InlineKeyboardButton(text="Проверить снова", callback_data="check")]
+    [types.InlineKeyboardButton(text="Получить промокод", callback_data="check")]
 ])
 
 # Обработчик команды /start
 @dp.message(CommandStart())
 async def start(message: types.Message):
     await message.answer(
-        "Привет! Нажми кнопку ниже, чтобы проверить подписку на канал:",
+        "Здравствуйте! Нажмите конпку, чтобы получить промокод",
         reply_markup=check_kb
     )
 
@@ -38,15 +38,15 @@ async def check_subscription(callback: types.CallbackQuery):
         member = await bot.get_chat_member(CHANNEL_USERNAME, callback.from_user.id)
 
         if member.status in ["member", "administrator", "creator"]:
-            await callback.message.answer("Ты подписан на канал. Добро пожаловать!")
+            await callback.message.answer("Спасибо, что вы с нами! Ваш промокод: FORTUNA26")
         else:
             await callback.message.answer(
-                "Ты ещё не подписан на канал. Подпишись, а затем нажми кнопку ниже, чтобы проверить снова:",
+                "Вы не подписаны на канал. Подпишитесь и попробуйте снова:",
                 reply_markup=subscribe_kb
             )
     except:
         await callback.message.answer(
-            "Не могу проверить подписку. Убедись, что ты зашел в канал и нажми кнопку снова:",
+            "Ошибка",
             reply_markup=subscribe_kb
         )
 
